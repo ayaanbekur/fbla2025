@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Generate Summary</h2>
+<form method="POST" action="{{ url_for('summary') }}">
+    <div class="mb-3">
+        <label for="period" class="form-label">Period</label>
+        <select class="form-select" id="period" name="period" required>
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Generate</button>
+</form>
+
+{% if transactions %}
+<h3 class="mt-4">{{ period }} Summary</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction.date }}</td>
+            <td>{{ transaction.type }}</td>
+            <td>{{ transaction.category }}</td>
+            <td>${{ transaction.amount | round(2) }}</td>
+            <td>{{ transaction.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

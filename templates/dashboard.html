@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Side Panel -->
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-user-cog"></i> Account Settings</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>Account Created:</strong> {{ user.created_at }}
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{{ url_for('change_password') }}" class="btn btn-link">
+                            <i class="fas fa-key"></i> Change Password
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{{ url_for('reset_data') }}" class="btn btn-link">
+                            <i class="fas fa-undo"></i> Reset All Data
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{{ url_for('delete_account') }}" class="btn btn-link text-danger">
+                            <i class="fas fa-trash"></i> Delete Account
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9">
+        <h2 class="mb-4"><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-coins"></i> Balance</h5>
+                <p class="card-text fs-4">${{ user.balance | round(2) }}</p>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <a href="{{ url_for('add_transaction') }}" class="btn btn-primary me-2">
+                <i class="fas fa-plus"></i> Add Income/Expense
+            </a>
+            <a href="{{ url_for('add_goal') }}" class="btn btn-success me-2">
+                <i class="fas fa-bullseye"></i> Add Savings Goal
+            </a>
+            <a href="{{ url_for('view_transactions') }}" class="btn btn-info me-2">
+                <i class="fas fa-list"></i> View Transactions
+            </a>
+            <a href="{{ url_for('view_goals') }}" class="btn btn-warning me-2">
+                <i class="fas fa-piggy-bank"></i> View Savings Goals
+            </a>
+            <a href="{{ url_for('summary') }}" class="btn btn-secondary">
+                <i class="fas fa-chart-bar"></i> Generate Summary
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
