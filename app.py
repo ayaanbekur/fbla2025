@@ -1,115 +1,18 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import json
 import os
 from datetime import datetime
 import hashlib
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-from dotenv import load_dotenv  # Import the load_dotenv function
-from datetime import datetime  # Add this import at the top
+from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")  # Get the secret key from .env
+app.secret_key = os.getenv("SECRET_KEY")
 
 # File to store user data
 USER_DATA_FILE = "user_data.json"
-
-# Register a new user (updated to include account creation date)
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        user_data = load_user_data()
-        if username in user_data:
-            flash("Username already exists. Please log in.", "error")
-            return redirect(url_for("register"))
-
-        user_data[username] = {
-            "password": hash_password(password),
-            "balance": 0,
-            "transactions": [],
-            "goals": [],
-            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Add account creation date
-        }
-        save_user_data(user_data)
-        flash("Registration successful! Please log in.", "success")
-        return redirect(url_for("login"))
-
-    return render_template("register.html")
-
-# Change password
-@app.route("/change_password", methods=["GET", "POST"])
-def change_password():
-    if "username" not in session:
-        flash("Please log in to change your password.", "error")
-        return redirect(url_for("login"))
-
-    username = session["username"]
-    user_data = load_user_data()
-
-    if request.method == "POST":
-        current_password = request.form.get("current_password")
-        new_password = request.form.get("new_password")
-        confirm_password = request.form.get("confirm_password")
-
-        if user_data[username]["password"] != hash_password(current_password):
-            flash("Current password is incorrect.", "error")
-        elif new_password != confirm_password:
-            flash("New passwords do not match.", "error")
-        else:
-            user_data[username]["password"] = hash_password(new_password)
-            save_user_data(user_data)
-            flash("Password changed successfully!", "success")
-            return redirect(url_for("dashboard"))
-
-    return render_template("change_password.html")
-
-# Reset all data
-@app.route("/reset_data", methods=["GET", "POST"])
-def reset_data():
-    if "username" not in session:
-        flash("Please log in to reset your data.", "error")
-        return redirect(url_for("login"))
-
-    username = session["username"]
-    user_data = load_user_data()
-
-    if request.method == "POST":
-        user_data[username]["transactions"] = []
-        user_data[username]["goals"] = []
-        user_data[username]["balance"] = 0
-        save_user_data(user_data)
-        flash("All data has been reset.", "success")
-        return redirect(url_for("dashboard"))
-
-    return render_template("reset_data.html")
-
-# Delete account
-@app.route("/delete_account", methods=["GET", "POST"])
-def delete_account():
-    if "username" not in session:
-        flash("Please log in to delete your account.", "error")
-        return redirect(url_for("login"))
-
-    username = session["username"]
-    user_data = load_user_data()
-
-    if request.method == "POST":
-        confirm_username = request.form.get("confirm_username")
-
-        if confirm_username != username:
-            flash("Username does not match.", "error")
-        else:
-            del user_data[username]
-            save_user_data(user_data)
-            session.pop("username", None)
-            flash("Your account has been deleted.", "success")
-            return redirect(url_for("login"))
-
-    return render_template("delete_account.html")
 
 # Load user data from JSON file
 def load_user_data():
@@ -142,6 +45,30 @@ def hash_password(password):
 def home():
     return render_template("login.html")
 
+# Register a new user
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        user_data = load_user_data()
+        if username in user_data:
+            flash("Username already exists. Please log in.", "error")
+            return redirect(url_for("register"))
+
+        user_data[username] = {
+            "password": hash_password(password),
+            "balance": 0,
+            "transactions": [],
+            "goals": [],
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        save_user_data(user_data)
+        flash("Registration successful! Please log in.", "success")
+        return redirect(url_for("login"))
+
+    return render_template("register.html")
 
 # Log in an existing user
 @app.route("/login", methods=["GET", "POST"])
@@ -174,6 +101,7 @@ def dashboard():
 
     return render_template("dashboard.html", user=user)
 
+# Add income or expense
 @app.route("/add_transaction", methods=["GET", "POST"])
 def add_transaction():
     if "username" not in session:
@@ -189,17 +117,10 @@ def add_transaction():
         category = request.form.get("category")
         amount = float(request.form.get("amount"))
         description = request.form.get("description")
-        transaction_date = request.form.get("date")  # Get the transaction date from the form
-
-        # Validate the date (optional)
-        try:
-            datetime.strptime(transaction_date, "%Y-%m-%d")
-        except ValueError:
-            flash("Invalid date format. Please use YYYY-MM-DD.", "error")
-            return redirect(url_for("add_transaction"))
+        transaction_date = request.form.get("date")
 
         transaction = {
-            "date": transaction_date,  # Use the provided date
+            "date": transaction_date,
             "type": transaction_type,
             "category": category,
             "amount": amount,
@@ -330,7 +251,6 @@ def edit_transaction(index):
             transaction["description"] = request.form.get("description")
             flash("Transaction updated successfully!", "success")
         elif action == "delete":
-            # Recalculate balance when deleting a transaction
             deleted_transaction = transactions[index]
             if deleted_transaction["type"] == "Income":
                 user_data[username]["balance"] -= deleted_transaction["amount"]
@@ -381,6 +301,70 @@ def contribute_to_goal(index):
             return redirect(url_for("view_goals"))
 
     return render_template("contribute_to_goal.html", goal=goal, index=index)
+
+# Account Settings Page
+@app.route("/account_settings")
+def account_settings():
+    if "username" not in session:
+        flash("Please log in to access account settings.", "error")
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    user_data = load_user_data()
+    user = user_data[username]
+
+    return render_template("account_settings.html", user=user)
+
+# Change Password
+@app.route("/change_password", methods=["GET", "POST"])
+def change_password():
+    if "username" not in session:
+        flash("Please log in to change your password.", "error")
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    user_data = load_user_data()
+
+    if request.method == "POST":
+        current_password = request.form.get("current_password")
+        new_password = request.form.get("new_password")
+        confirm_password = request.form.get("confirm_password")
+
+        if user_data[username]["password"] != hash_password(current_password):
+            flash("Current password is incorrect.", "error")
+        elif new_password != confirm_password:
+            flash("New passwords do not match.", "error")
+        else:
+            user_data[username]["password"] = hash_password(new_password)
+            save_user_data(user_data)
+            flash("Password changed successfully!", "success")
+            return redirect(url_for("account_settings"))
+
+    return render_template("change_password.html")
+
+# Delete Account
+@app.route("/delete_account", methods=["GET", "POST"])
+def delete_account():
+    if "username" not in session:
+        flash("Please log in to delete your account.", "error")
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    user_data = load_user_data()
+
+    if request.method == "POST":
+        confirm_username = request.form.get("confirm_username")
+
+        if confirm_username != username:
+            flash("Username does not match.", "error")
+        else:
+            del user_data[username]
+            save_user_data(user_data)
+            session.pop("username", None)
+            flash("Your account has been deleted.", "success")
+            return redirect(url_for("login"))
+
+    return render_template("delete_account.html")
 
 # Logout
 @app.route("/logout")
