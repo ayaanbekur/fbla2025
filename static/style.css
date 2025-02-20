@@ -37,17 +37,6 @@ body {
 }
 
 /* Buttons */
-.button-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Space between buttons */
-    margin: 20px 0;
-}
-
-.button-container a {
-    text-decoration: none;
-}
-
 button, .btn {
     background-color: #2C3E50; /* Dark Blue */
     color: #FFFFFF; /* White */
@@ -64,6 +53,19 @@ button, .btn {
 
 button:hover, .btn:hover {
     background-color: #1A252F; /* Darker Blue */
+    color: #FFFFFF; /* Ensure text stays white */
+}
+
+/* Button Container */
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between buttons */
+    margin: 20px 0;
+}
+
+.button-container a {
+    text-decoration: none;
 }
 
 /* Forms */

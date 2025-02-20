@@ -38,6 +38,20 @@
 
 <div class="card mt-4">
     <div class="card-body">
+        <h5 class="card-title"><i class="fas fa-envelope"></i> Reset Password</h5>
+        <p class="card-text">
+            Click the button below to receive a password reset link via email.
+        </p>
+        <form method="POST" action="{{ url_for('account_settings') }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Send Reset Link
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
         <h5 class="card-title"><i class="fas fa-trash"></i> Delete Account</h5>
         <p class="card-text">Warning: This action cannot be undone. All your data will be permanently deleted.</p>
         <form method="POST" action="{{ url_for('delete_account') }}">
