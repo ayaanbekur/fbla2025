@@ -113,3 +113,18 @@ footer {
 .hidden {
     display: none;
 }
+
+#chat-box {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#chat-box div {
+    margin-bottom: 10px;
+}
+
+#chat-box strong {
+    color: #2C3E50;
+}

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+import openai
 import json
 import os
 from datetime import datetime, timedelta
@@ -8,12 +9,22 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 import re
 import flask_dance
+from openai import OpenAI, RateLimitError
+
+# Load environment variables
+load_dotenv()
+
+openai.api_key = os.getenv("OPEN_AI_API_KEY")
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USE_TLS = True
 
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer import oauth_authorized, oauth_error
@@ -53,6 +64,40 @@ google_blueprint = make_google_blueprint(
     storage=SQLAlchemyStorage(User, db_session, user_id=lambda: session.get("user_id"))
 )
 app.register_blueprint(google_blueprint, url_prefix="/login/google")
+
+@app.route("/chat_page")
+def chat_page():
+    if "username" not in session:
+        flash("Please log in to access the chat.", "error")
+        return redirect(url_for("login"))
+    return render_template("chat.html")
+
+client = OpenAI(api_key=os.getenv("OPEN_AI_API_KEY"))
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_message = request.json.get("message")
+    if not user_message:
+        return jsonify({"error": "No message provided"}), 400
+
+    try:
+        # Generate response using OpenAI API (new syntax)
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are Classy Billionaire, an AI financial advisor offering expert advice on budgeting, investing, and saving money."},
+                {"role": "user", "content": user_message}
+            ]
+        )
+        
+        # Extract the AI's reply
+        ai_reply = response.choices[0].message.content
+        return jsonify({"response": ai_reply})
+
+    except RateLimitError:
+        return jsonify({"error": "You have exceeded your OpenAI API quota. Please check your billing plan."}), 429
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # OAuth authorized handler
 @oauth_authorized.connect_via(google_blueprint)

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-comments"></i> Chat with Classy Billionaire</h2>
+
+<div class="card">
+    <div class="card-body">
+        <div id="chat-box" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+            <!-- Chat messages will appear here -->
+        </div>
+        <form id="chat-form">
+            <div class="mb-3">
+                <input type="text" class="form-control" id="user-message" placeholder="Type your message here..." required>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Send
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // JavaScript to handle chat interaction
+    const chatBox = document.getElementById("chat-box");
+    const chatForm = document.getElementById("chat-form");
+    const userMessageInput = document.getElementById("user-message");
+
+    chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const userMessage = userMessageInput.value.trim();
+
+        if (userMessage) {
+            // Add user's message to the chat box
+            chatBox.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
+            userMessageInput.value = ""; // Clear the input field
+
+            // Send the message to the server
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ message: userMessage }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // Add AI's response to the chat box
+                chatBox.innerHTML += `<div><strong>Classy Billionaire:</strong> ${data.response}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+            } else {
+                chatBox.innerHTML += `<div><strong>Error:</strong> Failed to get a response from the AI.</div>`;
+            }
+        }
+    });
+</script>
+{% endblock %}
