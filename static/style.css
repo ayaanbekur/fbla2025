@@ -3,7 +3,7 @@
 
 /* General Styles */
 body {
-    background-color: #F0F0F0; /* Light Gray */
+    background-color: #e7e7e7; /* Light Gray */
     color: #222222; /* Dark Gray for text */
     font-family: 'Montserrat', sans-serif; /* Modern font */
     margin: 0;
@@ -12,7 +12,7 @@ body {
 
 /* Navigation Bar */
 .navbar {
-    background-color: #566377; /* Muted Blue-Gray */
+    background-color: #39a458; /* Muted Blue-Gray */
     padding: 15px;
 }
 
@@ -38,7 +38,7 @@ body {
 
 /* Buttons */
 button, .btn {
-    background-color: #2C3E50; /* Dark Blue */
+    background-color: #29763f; /* Dark Blue */
     color: #FFFFFF; /* White */
     border: none;
     padding: 10px 20px;
@@ -52,7 +52,7 @@ button, .btn {
 }
 
 button:hover, .btn:hover {
-    background-color: #1A252F; /* Darker Blue */
+    background-color: #1c4f2a; /* Darker Blue */
     color: #FFFFFF; /* Ensure text stays white */
 }
 
@@ -70,9 +70,9 @@ button:hover, .btn:hover {
 
 /* Forms */
 input, textarea {
-    background-color: #FFFFFF; /* White */
+    background-color: #e7e7e7; /* White */
     color: #222222; /* Dark Gray */
-    border: 1px solid #566377; /* Muted Blue-Gray */
+    border: 1px solid #39a458; /* Muted Blue-Gray */
     padding: 10px;
     margin: 5px 0;
     width: 100%;
@@ -82,7 +82,7 @@ input, textarea {
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #2C3E50; /* Dark Blue */
+    border-color: #39a458; /* Dark Blue */
 }
 
 /* Cards or Boxes */
@@ -96,7 +96,7 @@ input:focus, textarea:focus {
 
 /* Footer */
 footer {
-    background-color: #566377; /* Muted Blue-Gray */
+    background-color: #39a458; /* Muted Blue-Gray */
     color: #FFFFFF; /* White */
     text-align: center;
     padding: 10px;
@@ -126,5 +126,5 @@ footer {
 }
 
 #chat-box strong {
-    color: #2C3E50;
+    color: #39a458;
 }
