@@ -35,7 +35,8 @@ SimpleGUITk==1.1.3
 six==1.17.0
 urllib3==2.2.3
 Werkzeug==3.1.3
-flask
-flask_dance
-openai
-gunicorn
+flask==3.1.0
+flask_dance==7.1.0
+openai==1.64.0
+gunicorn23.0.0
+sqlalchemy==2.0.38
