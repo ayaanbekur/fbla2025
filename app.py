@@ -120,12 +120,11 @@ def save_user_data(data):
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
-
+ 
 @app.route("/")
 def home():
-    return render_template("login.html")
-
-
+    return render_template("home.html")
+  
 # OAuth authorized handler
 @oauth_authorized.connect_via(google_blueprint)
 def google_authorized(blueprint, token):

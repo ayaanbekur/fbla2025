@@ -3,43 +3,110 @@
 
 /* General Styles */
 body {
-    background-color: #e7e7e7; /* Light Gray */
-    color: #222222; /* Dark Gray for text */
-    font-family: 'Montserrat', sans-serif; /* Modern font */
+    background-color: #ECF0F1; /* Light Gray background */
+    color: #333333; /* Dark Gray text for readability */
+    font-family: 'Montserrat', sans-serif; /* Modern and clean font */
     margin: 0;
     padding: 0;
+    scroll-behavior: smooth; /* Smooth scrolling for the entire page */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the body takes up at least the full viewport height */
 }
 
 /* Navigation Bar */
 .navbar {
-    background-color: #39a458; /* Muted Blue-Gray */
+    background-color: #2E4053; /* Dark Gray for a modern feel */
     padding: 15px;
+    display: flex;
+    justify-content: flex-end;
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensure navbar stays on top */
 }
 
-.navbar-brand {
-    color: #FFFFFF !important; /* White */
-    font-weight: bold;
-    font-size: 24px;
-}
-
-.navbar-brand:hover {
-    color: #DDDDDD !important; /* Light Gray */
-}
-
-.navbar-nav .nav-link {
-    color: #FFFFFF !important; /* White */
+.navbar a {
+    color: #FFFFFF !important; /* White text for contrast */
+    text-decoration: none;
+    margin-left: 20px;
     font-size: 18px;
-    margin: 0 10px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
-.navbar-nav .nav-link:hover {
-    color: #DDDDDD !important; /* Light Gray */
+.navbar a:hover {
+    background-color: #27AE60; /* Emerald Green for hover effect */
+}
+
+/* Hero Section (Homepage) */
+.hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    text-align: center;
+    background: linear-gradient(to bottom, #2E4053, #27AE60); /* Gradient background */
+    color: #FFFFFF; /* White text for contrast */
+    padding: 20px;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin: 0;
+    animation: fadeIn 2s ease-in-out; /* Fade-in animation */
+}
+
+.hero p {
+    font-size: 1.5rem;
+    margin-top: 20px;
+    animation: fadeIn 3s ease-in-out; /* Delayed fade-in animation */
+}
+
+/* Overview Section */
+.overview {
+    padding: 60px 20px;
+    background-color: #FFFFFF; /* White background for contrast */
+    text-align: center;
+}
+
+.overview h2 {
+    font-size: 2.5rem;
+    color: #2E4053; /* Dark Gray for headings */
+    margin-bottom: 20px;
+}
+
+.overview p {
+    font-size: 1.2rem;
+    color: #333333; /* Dark Gray for text */
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* How-to-Use Section */
+.how-to-use {
+    padding: 60px 20px;
+    background-color: #ECF0F1; /* Light Gray background */
+    text-align: center;
+}
+
+.how-to-use h2 {
+    font-size: 2.5rem;
+    color: #2E4053; /* Dark Gray for headings */
+    margin-bottom: 20px;
+}
+
+.how-to-use p {
+    font-size: 1.2rem;
+    color: #333333; /* Dark Gray for text */
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 /* Buttons */
 button, .btn {
-    background-color: #29763f; /* Dark Blue */
-    color: #FFFFFF; /* White */
+    background-color: #27AE60; /* Emerald Green for buttons */
+    color: #FFFFFF; /* White text */
     border: none;
     padding: 10px 20px;
     cursor: pointer;
@@ -52,27 +119,14 @@ button, .btn {
 }
 
 button:hover, .btn:hover {
-    background-color: #1c4f2a; /* Darker Blue */
-    color: #FFFFFF; /* Ensure text stays white */
-}
-
-/* Button Container */
-.button-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Space between buttons */
-    margin: 20px 0;
-}
-
-.button-container a {
-    text-decoration: none;
+    background-color: #2ECC71; /* Bright Green for hover effect */
 }
 
 /* Forms */
 input, textarea {
-    background-color: #e7e7e7; /* White */
-    color: #222222; /* Dark Gray */
-    border: 1px solid #39a458; /* Muted Blue-Gray */
+    background-color: #FFFFFF; /* White background */
+    color: #333333; /* Dark Gray text */
+    border: 1px solid #2E4053; /* Dark Gray border */
     padding: 10px;
     margin: 5px 0;
     width: 100%;
@@ -82,12 +136,12 @@ input, textarea {
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #39a458; /* Dark Blue */
+    border-color: #27AE60; /* Emerald Green for focus effect */
 }
 
 /* Cards or Boxes */
 .card {
-    background-color: #FFFFFF; /* White */
+    background-color: #FFFFFF; /* White background */
     padding: 20px;
     margin: 20px;
     border-radius: 8px;
@@ -96,13 +150,21 @@ input:focus, textarea:focus {
 
 /* Footer */
 footer {
-    background-color: #39a458; /* Muted Blue-Gray */
-    color: #FFFFFF; /* White */
+    background-color: #2E4053; /* Dark Gray for footer */
+    color: #FFFFFF; /* White text */
     text-align: center;
-    padding: 10px;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+    padding: 20px;
+    margin-top: auto; /* Push footer to the bottom */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* Utility Classes */
@@ -115,7 +177,7 @@ footer {
 }
 
 #chat-box {
-    background-color: #f9f9f9;
+    background-color: #ECF0F1;
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
@@ -126,5 +188,5 @@ footer {
 }
 
 #chat-box strong {
-    color: #39a458;
+    color: #27AE60; /* Emerald Green for emphasis */
 }

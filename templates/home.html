@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div>
+            <h1>Personal Finance Manager</h1>
+            <p>Take control of your finances with ease.</p>
+            <a href="#overview" class="btn">Learn More</a>
+        </div>
+    </div>
+
+    <!-- Overview Section -->
+    <div id="overview" class="overview">
+        <h2>Overview</h2>
+        <p>
+            The Personal Finance Manager is your ultimate tool for managing your finances. 
+            Track your income, expenses, and savings goals with ease. Our intuitive interface 
+            and powerful features make financial management simple and effective.
+        </p>
+    </div>
+
+    <!-- How-to-Use Section -->
+    <div class="how-to-use">
+        <h2>How to Use</h2>
+        <p>
+            Getting started is easy! Simply create an account, log in, and start adding your 
+            financial data. You can track your transactions, set savings goals, and generate 
+            detailed reports to stay on top of your finances.
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2023 Personal Finance Manager. All rights reserved.
+    </footer>
+</body>
+</html>
