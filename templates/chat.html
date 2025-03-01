@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="mb-4"><i class="fas fa-comments"></i> Chat with Classy Billionaire</h2>
+<h2 class="mb-4"><i class="fas fa-comments"></i> Chat with Classy Billionaire</h2> <!-- Page title -->
 
 <div class="card">
     <div class="card-body">
-        <div id="chat-box" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-            <!-- Chat messages will appear here -->
+        <div id="chat-box" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"> <!-- Chat messages will appear here -->
         </div>
-        <form id="chat-form">
+        <form id="chat-form"> <!-- Chat form -->
             <div class="mb-3">
                 <input type="text" class="form-control" id="user-message" placeholder="Type your message here..." required>
             </div>

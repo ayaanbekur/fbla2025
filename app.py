@@ -8,21 +8,24 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 import re
 import openai
+import requests
 from flask_dance.contrib.google import make_google_blueprint
 from flask_dance.consumer import oauth_authorized, oauth_error
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-
+from openai import OpenAI
+import json
+from llamaapi import LlamaAPI
 
 # Load environment variables
 load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions" # OpenRouter API endpoint
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+ 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
-client = openai.OpenAI(api_key=os.getenv("OPEN_AI_API_KEY"))
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -75,6 +78,7 @@ def chat_page():
         return redirect(url_for("login"))
     return render_template("chat.html")
 
+
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
@@ -84,22 +88,42 @@ def chat():
         if not user_message:
             return jsonify({"response": "Error: No message provided."}), 400
 
-        # OpenAI API call
-        response = openai.ChatCompletion.create(
-            model="gpt-4",  # Change to "gpt-3.5-turbo" if needed
-            messages=[
+        # OpenRouter API request payload
+        payload = {
+            "model": "google/gemini-flash-lite-2.0-preview",  # Use the correct model name
+            "messages": [
                 {"role": "system", "content": "You are Classy Billionaire, an expert in finance."},
                 {"role": "user", "content": user_message}
             ]
-        )
+        }
 
-        # Extract response text
-        ai_response = response["choices"][0]["message"]["content"].strip()
+        # Headers for OpenRouter API
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        # Make the API request to OpenRouter
+        response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code != 200:
+            return jsonify({"response": f"Error: {response.status_code} - {response.text}"}), 500
+
+        # Extract the AI's response with error checking for missing keys
+        result = response.json()
+        if "choices" in result and result["choices"]:
+            ai_response = result["choices"][0].get("message", {}).get("content", "").strip()
+            if not ai_response:
+                ai_response = "No content returned by the AI."
+        else:
+            ai_response = result.get("error", "Unexpected response format from the API.")
         return jsonify({"response": ai_response})
 
     except Exception as e:
         return jsonify({"response": f"Error: {str(e)}"}), 500
 
+    
 def load_user_data():
     if not os.path.exists(USER_DATA_FILE):
         with open(USER_DATA_FILE, "w") as file:
@@ -208,7 +232,7 @@ def reset_password():
 
         if user:
             # Generate a reset token
-            token = serializer.dumps(email, salt=app.secret_key + "password-reset")
+            token = serializer.dumps(email, salt="password-reset")
             reset_url = url_for('reset_password_token', token=token, _external=True)
 
             # Send the reset email
@@ -368,9 +392,14 @@ def summary():
         now = datetime.now()
 
         if period == "Weekly":
-            start_date = now - timedelta(days=7) if period == "Weekly" else now - timedelta(days=30)
+            start_date = now - timedelta(days=7)
         elif period == "Monthly":
-            start_date = now.replace(month=now.month - 1)
+            try:
+                from dateutil.relativedelta import relativedelta
+                start_date = now - relativedelta(months=1)
+            except ImportError:
+                flash("dateutil module is required for monthly summary.", "error")
+                return redirect(url_for("summary"))
         else:
             flash("Invalid period.", "error")
             return redirect(url_for("summary"))

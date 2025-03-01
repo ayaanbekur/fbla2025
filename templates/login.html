@@ -2,24 +2,24 @@
 
 {% block content %}
 <h2 class="mb-4">Login</h2>
-<form method="POST" action="{{ url_for('login') }}">
+<form method="POST" action="{{ url_for('login') }}"> <!-- Login form -->
     <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
+        <label for="username" class="form-label">Username</label> <!-- Username -->
         <input type="text" class="form-control" id="username" name="username" required>
     </div>
     <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">Password</label> <!-- Password -->
         <input type="password" class="form-control" id="password" name="password" required>
     </div>
-    <button type="submit" class="btn btn-primary">Login</button>
+    <button type="submit" class="btn btn-primary">Login</button> <!-- Login button -->
 </form>
 <div class="mt-3">
-    <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
-    <a href="{{ url_for('reset_password') }}" class="btn btn-warning">Forgot Password?</a>
+    <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a> <!-- Register button -->
+    <a href="{{ url_for('reset_password') }}" class="btn btn-warning">Forgot Password?</a> <!-- Forgot password button -->
 </div>
 <div class="mt-3">
-    <a href="{{ url_for('google.login') }}" class="btn btn-danger">
-        <i class="fab fa-google"></i> Login with Google
+    <a href="{{ url_for('google.login') }}" class="btn btn-danger"> <!-- Google login button -->
+        <i class="fab fa-google"></i> Login with Google <!-- Google login button -->
     </a>
 </div>
 {% endblock %}

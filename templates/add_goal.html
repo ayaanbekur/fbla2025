@@ -5,20 +5,20 @@
 
 <div class="card">
     <div class="card-body">
-        <form method="POST" action="{{ url_for('add_goal') }}">
+        <form method="POST" action="{{ url_for('add_goal') }}"> <!-- Add goal form -->
             <div class="mb-3">
-                <label for="name" class="form-label">Goal Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+                <label for="name" class="form-label">Goal Name</label> <!-- Goal name -->
+                <input type="text" class="form-control" id="name" name="name" required> <!-- Goal name input -->
             </div>
             <div class="mb-3">
-                <label for="target" class="form-label">Target Amount</label>
-                <input type="number" step="0.01" class="form-control" id="target" name="target" required>
+                <label for="target" class="form-label">Target Amount</label> <!-- Target amount -->
+                <input type="number" step="0.01" class="form-control" id="target" name="target" required> <!-- Target amount input -->
             </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Add Goal
+            <button type="submit" class="btn btn-primary"> <!-- Add goal button -->
+                <i class="fas fa-save"></i> Add Goal <!-- Save button -->
             </button>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Return to Dashboard
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary"> <!-- Return to dashboard button -->
+                <i class="fas fa-arrow-left"></i> Return to Dashboard <!-- Return to dashboard button -->
             </a>
         </form>
     </div>

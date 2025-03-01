@@ -3,8 +3,8 @@
 
 /* General Styles */
 body {
-    background-color: #ECF0F1; /* Light Gray background */
-    color: #333333; /* Dark Gray text for readability */
+    background-color: #F2F4EC; /* Light Gray background */
+    color: #435739; /* Dark Green text for readability */
     font-family: 'Montserrat', sans-serif; /* Modern and clean font */
     margin: 0;
     padding: 0;
@@ -16,7 +16,7 @@ body {
 
 /* Navigation Bar */
 .navbar {
-    background-color: #2E4053; /* Dark Gray for a modern feel */
+    background-color: #435739; /* Dark Green for navbar */
     padding: 15px;
     display: flex;
     justify-content: flex-end;
@@ -26,7 +26,7 @@ body {
 }
 
 .navbar a {
-    color: #FFFFFF !important; /* White text for contrast */
+    color: #F2F4EC !important; /* Light Gray text for contrast */
     text-decoration: none;
     margin-left: 20px;
     font-size: 18px;
@@ -36,9 +36,10 @@ body {
 }
 
 .navbar a:hover {
-    background-color: #27AE60; /* Emerald Green for hover effect */
+    background-color: #6B7C61; /* Muted Green for hover effect */
 }
 
+/* Hero Section (Homepage) */
 /* Hero Section (Homepage) */
 .hero {
     display: flex;
@@ -46,9 +47,14 @@ body {
     align-items: center;
     height: 100vh; /* Full viewport height */
     text-align: center;
-    background: linear-gradient(to bottom, #2E4053, #27AE60); /* Gradient background */
-    color: #FFFFFF; /* White text for contrast */
+    background: linear-gradient(to bottom, #435739, #6B7C61); /* Gradient background */
+    color: #F2F4EC; /* Light Gray text for contrast */
     padding: 20px;
+    position: fixed; /* Fix the hero section in place */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1; /* Ensure hero section stays below the scrolling content */
 }
 
 .hero h1 {
@@ -63,22 +69,26 @@ body {
     animation: fadeIn 3s ease-in-out; /* Delayed fade-in animation */
 }
 
-/* Overview Section */
 .overview {
     padding: 60px 20px;
-    background-color: #FFFFFF; /* White background for contrast */
+    background-color: #F2F4EC; /* Light Gray background */
     text-align: center;
+    position: relative; /* Needed for z-index to work */
+    z-index: 2; /* Higher z-index to overlap the hero section */
+    margin-top: 100vh; /* Push the section below the hero */
 }
+
+
 
 .overview h2 {
     font-size: 2.5rem;
-    color: #2E4053; /* Dark Gray for headings */
+    color: #435739; /* Dark Green for headings */
     margin-bottom: 20px;
 }
 
 .overview p {
     font-size: 1.2rem;
-    color: #333333; /* Dark Gray for text */
+    color: #435739; /* Dark Green for text */
     max-width: 800px;
     margin: 0 auto;
 }
@@ -86,27 +96,29 @@ body {
 /* How-to-Use Section */
 .how-to-use {
     padding: 60px 20px;
-    background-color: #ECF0F1; /* Light Gray background */
+    background-color: #D9DFCC; /* Light Green background */
     text-align: center;
+    position: relative; /* Needed for z-index to work */
+    z-index: 3; /* Higher z-index to overlap the overview section */
 }
 
 .how-to-use h2 {
     font-size: 2.5rem;
-    color: #2E4053; /* Dark Gray for headings */
+    color: #435739; /* Dark Green for headings */
     margin-bottom: 20px;
 }
 
 .how-to-use p {
     font-size: 1.2rem;
-    color: #333333; /* Dark Gray for text */
+    color: #435739; /* Dark Green for text */
     max-width: 800px;
     margin: 0 auto;
 }
 
 /* Buttons */
 button, .btn {
-    background-color: #27AE60; /* Emerald Green for buttons */
-    color: #FFFFFF; /* White text */
+    background-color: #6B7C61; /* Muted Green for buttons */
+    color: #F2F4EC; /* Light Gray text */
     border: none;
     padding: 10px 20px;
     cursor: pointer;
@@ -119,14 +131,14 @@ button, .btn {
 }
 
 button:hover, .btn:hover {
-    background-color: #2ECC71; /* Bright Green for hover effect */
+    background-color: #A7B194; /* Light Green for hover effect */
 }
 
 /* Forms */
 input, textarea {
-    background-color: #FFFFFF; /* White background */
-    color: #333333; /* Dark Gray text */
-    border: 1px solid #2E4053; /* Dark Gray border */
+    background-color: #F2F4EC; /* Light Gray background */
+    color: #435739; /* Dark Green text */
+    border: 1px solid #6B7C61; /* Muted Green border */
     padding: 10px;
     margin: 5px 0;
     width: 100%;
@@ -136,12 +148,12 @@ input, textarea {
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #27AE60; /* Emerald Green for focus effect */
+    border-color: #A7B194; /* Light Green for focus effect */
 }
 
 /* Cards or Boxes */
 .card {
-    background-color: #FFFFFF; /* White background */
+    background-color: #F2F4EC; /* Light Gray background */
     padding: 20px;
     margin: 20px;
     border-radius: 8px;
@@ -150,8 +162,8 @@ input:focus, textarea:focus {
 
 /* Footer */
 footer {
-    background-color: #2E4053; /* Dark Gray for footer */
-    color: #FFFFFF; /* White text */
+    background-color: #435739; /* Dark Green for footer */
+    color: #F2F4EC; /* Light Gray text */
     text-align: center;
     padding: 20px;
     margin-top: auto; /* Push footer to the bottom */
@@ -177,7 +189,7 @@ footer {
 }
 
 #chat-box {
-    background-color: #ECF0F1;
+    background-color: #D9DFCC; /* Light Green background */
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
@@ -188,5 +200,5 @@ footer {
 }
 
 #chat-box strong {
-    color: #27AE60; /* Emerald Green for emphasis */
+    color: #6B7C61; /* Muted Green for emphasis */
 }

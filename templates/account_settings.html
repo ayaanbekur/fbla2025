@@ -5,7 +5,7 @@
 
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title"><i class="fas fa-user"></i> Account Details</h5>
+        <h5 class="card-title"><i class="fas fa-user"></i> Account Details</h5> <!-- Page title -->
         <p class="card-text">
             <strong>Username:</strong> {{ user.username }}<br>
             <strong>Account Created:</strong> {{ user.created_at }}
@@ -15,22 +15,22 @@
 
 <div class="card mt-4">
     <div class="card-body">
-        <h5 class="card-title"><i class="fas fa-key"></i> Change Password</h5>
+        <h5 class="card-title"><i class="fas fa-key"></i> Change Password</h5> <!-- Changing the passowrd button -->
         <form method="POST" action="{{ url_for('change_password') }}">
             <div class="mb-3">
-                <label for="current_password" class="form-label">Current Password</label>
+                <label for="current_password" class="form-label">Current Password</label> <!-- Current password -->
                 <input type="password" class="form-control" id="current_password" name="current_password" required>
             </div>
             <div class="mb-3">
-                <label for="new_password" class="form-label">New Password</label>
+                <label for="new_password" class="form-label">New Password</label> <!-- New password -->
                 <input type="password" class="form-control" id="new_password" name="new_password" required>
             </div>
             <div class="mb-3">
-                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                <label for="confirm_password" class="form-label">Confirm New Password</label> <!-- Confirm new password -->
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
             </div>
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Change Password
+                <i class="fas fa-save"></i> Change Password <!-- Save button -->
             </button>
         </form>
     </div>
@@ -40,9 +40,9 @@
     <div class="card-body">
         <h5 class="card-title"><i class="fas fa-envelope"></i> Reset Password</h5>
         <p class="card-text">
-            Click the button below to receive a password reset link via email.
+            Click the button below to receive a password reset link via email. <!-- Reset password button -->
         </p>
-        <form method="POST" action="{{ url_for('account_settings') }}">
+        <form method="POST" action="{{ url_for('account_settings') }}"> <!-- Account settings button -->
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-paper-plane"></i> Send Reset Link
             </button>
@@ -54,13 +54,13 @@
     <div class="card-body">
         <h5 class="card-title"><i class="fas fa-trash"></i> Delete Account</h5>
         <p class="card-text">Warning: This action cannot be undone. All your data will be permanently deleted.</p>
-        <form method="POST" action="{{ url_for('delete_account') }}">
+        <form method="POST" action="{{ url_for('delete_account') }}"> <!-- Delete account button -->
             <div class="mb-3">
                 <label for="confirm_username" class="form-label">Enter your username to confirm:</label>
                 <input type="text" class="form-control" id="confirm_username" name="confirm_username" required>
             </div>
             <button type="submit" class="btn btn-danger">
-                <i class="fas fa-trash"></i> Delete Account
+                <i class="fas fa-trash"></i> Delete Account <!-- Delete account button -->
             </button>
         </form>
     </div>
@@ -68,7 +68,7 @@
 
 <div class="mt-4">
     <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Return to Dashboard
+        <i class="fas fa-arrow-left"></i> Return to Dashboard <!-- Return to dashboard button -->
     </a>
 </div>
 {% endblock %}

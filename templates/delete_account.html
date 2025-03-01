@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="mb-4"><i class="fas fa-trash"></i> Delete Account</h2>
+<h2 class="mb-4"><i class="fas fa-trash"></i> Delete Account</h2> <!-- Page title -->
 
 <div class="card">
     <div class="card-body">
-        <p class="card-text">Are you sure you want to delete your account? This action cannot be undone.</p>
-        <form method="POST" action="{{ url_for('delete_account') }}">
+        <p class="card-text">Are you sure you want to delete your account? This action cannot be undone.</p> <!-- Delete account warning -->
+        <form method="POST" action="{{ url_for('delete_account') }}"> <!-- Delete account form -->
             <div class="mb-3">
-                <label for="confirm_username" class="form-label">Enter your username to confirm:</label>
-                <input type="text" class="form-control" id="confirm_username" name="confirm_username" required>
+                <label for="confirm_username" class="form-label">Enter your username to confirm:</label> <!-- Confirm username -->
+                <input type="text" class="form-control" id="confirm_username" name="confirm_username" required> <!-- Confirm username input -->
             </div>
-            <button type="submit" class="btn btn-danger">
-                <i class="fas fa-trash"></i> Delete Account
+            <button type="submit" class="btn btn-danger"> <!-- Delete account button -->
+                <i class="fas fa-trash"></i> Delete Account <!-- Delete account button -->
             </button>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Cancel
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary"> <!-- Cancel button -->
+                <i class="fas fa-times"></i> Cancel <!-- Cancel button -->
             </a>
         </form>
     </div>

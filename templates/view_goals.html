@@ -5,20 +5,20 @@
 
 <div class="row">
     {% for goal in goals %}
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 mb-4"> <!-- Goal card -->
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">{{ goal.name }}</h5>
+                <h5 class="card-title">{{ goal.name }}</h5> <!-- Goal name -->
                 <p class="card-text">
-                    <strong>Target:</strong> ${{ goal.target | round(2) }}<br>
-                    <strong>Saved:</strong> ${{ goal.saved | round(2) }}
+                    <strong>Target:</strong> ${{ goal.target | round(2) }}<br> <!-- Goal target -->
+                    <strong>Saved:</strong> ${{ goal.saved | round(2) }} <!-- Goal saved -->
                 </p>
                 <div class="progress mb-3">
-                    <div class="progress-bar" role="progressbar" style="width: '{{ (goal.saved / goal.target * 100) | round(2) }}%'">
+                    <div class="progress-bar" role="progressbar" style="width: '{{ (goal.saved / goal.target * 100) | round(2) }}%'"> <!-- Goal progress bar -->
                         {{ (goal.saved / goal.target * 100) | round(2) }}%
                     </div>
                 </div>
-                <a href="{{ url_for('contribute_to_goal', index=loop.index0) }}" class="btn btn-primary btn-sm">
+                <a href="{{ url_for('contribute_to_goal', index=loop.index0) }}" class="btn btn-primary btn-sm"> <!-- Contribute button -->
                     <i class="fas fa-plus"></i> Contribute
                 </a>
             </div>
