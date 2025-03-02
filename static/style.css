@@ -40,7 +40,6 @@ body {
 }
 
 /* Hero Section (Homepage) */
-/* Hero Section (Homepage) */
 .hero {
     display: flex;
     justify-content: center;
@@ -69,6 +68,7 @@ body {
     animation: fadeIn 3s ease-in-out; /* Delayed fade-in animation */
 }
 
+/* Overview Section */
 .overview {
     padding: 60px 20px;
     background-color: #F2F4EC; /* Light Gray background */
@@ -77,8 +77,6 @@ body {
     z-index: 2; /* Higher z-index to overlap the hero section */
     margin-top: 100vh; /* Push the section below the hero */
 }
-
-
 
 .overview h2 {
     font-size: 2.5rem;
@@ -98,27 +96,27 @@ body {
     padding: 60px 20px;
     background-color: #D9DFCC; /* Light Green background */
     text-align: center;
-    position: relative; /* Needed for z-index to work */
-    z-index: 3; /* Higher z-index to overlap the overview section */
+    position: relative;
+    z-index: 3;
 }
 
 .how-to-use h2 {
     font-size: 2.5rem;
-    color: #435739; /* Dark Green for headings */
+    color: #435739;
     margin-bottom: 20px;
 }
 
 .how-to-use p {
     font-size: 1.2rem;
-    color: #435739; /* Dark Green for text */
+    color: #435739;
     max-width: 800px;
     margin: 0 auto;
 }
 
 /* Buttons */
 button, .btn {
-    background-color: #6B7C61; /* Muted Green for buttons */
-    color: #F2F4EC; /* Light Gray text */
+    background-color: #6B7C61;
+    color: #F2F4EC;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
@@ -126,19 +124,19 @@ button, .btn {
     font-family: 'Montserrat', sans-serif;
     border-radius: 5px;
     transition: background-color 0.3s ease;
-    flex: 1 1 auto; /* Allow buttons to grow and shrink */
+    flex: 1 1 auto;
     text-align: center;
 }
 
 button:hover, .btn:hover {
-    background-color: #A7B194; /* Light Green for hover effect */
+    background-color: #A7B194;
 }
 
 /* Forms */
 input, textarea {
-    background-color: #F2F4EC; /* Light Gray background */
-    color: #435739; /* Dark Green text */
-    border: 1px solid #6B7C61; /* Muted Green border */
+    background-color: #F2F4EC;
+    color: #435739;
+    border: 1px solid #6B7C61;
     padding: 10px;
     margin: 5px 0;
     width: 100%;
@@ -148,12 +146,12 @@ input, textarea {
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #A7B194; /* Light Green for focus effect */
+    border-color: #A7B194;
 }
 
 /* Cards or Boxes */
 .card {
-    background-color: #F2F4EC; /* Light Gray background */
+    background-color: #F2F4EC;
     padding: 20px;
     margin: 20px;
     border-radius: 8px;
@@ -162,11 +160,11 @@ input:focus, textarea:focus {
 
 /* Footer */
 footer {
-    background-color: #435739; /* Dark Green for footer */
-    color: #F2F4EC; /* Light Gray text */
+    background-color: #435739;
+    color: #F2F4EC;
     text-align: center;
     padding: 20px;
-    margin-top: auto; /* Push footer to the bottom */
+    margin-top: auto;
 }
 
 /* Animations */
@@ -189,7 +187,7 @@ footer {
 }
 
 #chat-box {
-    background-color: #D9DFCC; /* Light Green background */
+    background-color: #D9DFCC;
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
@@ -200,5 +198,5 @@ footer {
 }
 
 #chat-box strong {
-    color: #6B7C61; /* Muted Green for emphasis */
+    color: #6B7C61;
 }
