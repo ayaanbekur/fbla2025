@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify #all of the libraries that we need to use
 import json
 import os
 from datetime import datetime, timedelta
