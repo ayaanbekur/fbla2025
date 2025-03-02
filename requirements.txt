@@ -40,4 +40,5 @@ flask_dance==7.1.0
 openai==1.64.0
 gunicorn==23.0.0
 sqlalchemy==2.0.38
-pip install flask_sqlalchemy
+flask_sqlalchemy==2.5.1
+flask_login==0.5.0
