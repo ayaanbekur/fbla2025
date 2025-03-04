@@ -18,12 +18,14 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from openai import OpenAI
 import json
 from llamaapi import LlamaAPI
-
+ 
 # Load environment variables
 load_dotenv()
+
+OPENROUTER_API_KEY = "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"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions" # OpenRouter API endpoint
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
- 
+#OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+  
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 # Flask-Mail configuration
@@ -82,46 +84,50 @@ def chat_page():
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
-        # Get user message from request
         user_message = request.json.get("message", "")
 
         if not user_message:
             return jsonify({"response": "Error: No message provided."}), 400
 
-        # OpenRouter API request payload
         payload = {
-            "model": "google/gemini-flash-lite-2.0-preview",  # Use the correct model name
+            "model": "deepseek/deepseek-chat:free",
             "messages": [
-                {"role": "system", "content": "You are Classy Billionaire, an expert in finance."},
+                {"role": "system", "content": "You are Moneyy, an expert in finance."},
                 {"role": "user", "content": user_message}
             ]
         }
 
-        # Headers for OpenRouter API
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json"
         }
 
-        # Make the API request to OpenRouter
         response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
 
-        # Check if the request was successful
         if response.status_code != 200:
+            print(f"API Error {response.status_code}: {response.text}")
             return jsonify({"response": f"Error: {response.status_code} - {response.text}"}), 500
 
-        # Extract the AI's response with error checking for missing keys
+        # Extract response properly
         result = response.json()
+        print("API Raw Response:", result)  # Log raw response for debugging
+
+        # Ensure we get text content
         if "choices" in result and result["choices"]:
-            ai_response = result["choices"][0].get("message", {}).get("content", "").strip()
-            if not ai_response:
-                ai_response = "No content returned by the AI."
+            message_obj = result["choices"][0].get("message", {})
+            ai_response = message_obj.get("content", "").strip()
         else:
-            ai_response = result.get("error", "Unexpected response format from the API.")
+            ai_response = "Unexpected response format from the AI."
+
+        print("Extracted AI Response:", ai_response)  # Debugging output
+
         return jsonify({"response": ai_response})
 
     except Exception as e:
+        print(f"Server Error: {e}")
         return jsonify({"response": f"Error: {str(e)}"}), 500
+
+
 
     
 def load_user_data():
