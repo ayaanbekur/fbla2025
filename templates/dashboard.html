@@ -11,20 +11,20 @@
 </div>
 
 <!-- Button Container -->
-<div class="button-container">
-    <a href="{{ url_for('add_transaction') }}" class="btn"> <!-- Add transaction button -->
+<div class="d-flex flex-row justify-content-center gap-3"> <!-- Center buttons horizontally -->
+    <a href="{{ url_for('add_transaction') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Add Income/Expense
     </a>
-    <a href="{{ url_for('add_goal') }}" class="btn"> <!-- Add goal button -->
+    <a href="{{ url_for('add_goal') }}" class="btn btn-primary">
         <i class="fas fa-bullseye"></i> Add Savings Goal
     </a>
-    <a href="{{ url_for('view_transactions') }}" class="btn"> <!-- View transactions button -->
+    <a href="{{ url_for('view_transactions') }}" class="btn btn-primary">
         <i class="fas fa-list"></i> View Transactions
     </a>
-    <a href="{{ url_for('view_goals') }}" class="btn"> <!-- View goals button -->
+    <a href="{{ url_for('view_goals') }}" class="btn btn-primary">
         <i class="fas fa-piggy-bank"></i> View Savings Goals
     </a> 
-    <a href="{{ url_for('summary') }}" class="btn"> <!-- Generate summary button -->
+    <a href="{{ url_for('summary') }}" class="btn btn-primary">
         <i class="fas fa-chart-bar"></i> Generate Summary
     </a>
 </div>

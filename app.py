@@ -508,21 +508,25 @@ def account_settings():
 
     username = session["username"]
     user_data = load_user_data()
-    user = user_data[username]
-
+    user = user_data[username] 
+   
     if request.method == "POST":
         email = user.get("email")
-        if email:
+        if email: 
+            # Generate a reset token
             token = serializer.dumps(email, salt='password-reset')
             reset_url = url_for('reset_password_token', token=token, _external=True)
-
+ 
+            # Send the reset email
             msg = Message("Password Reset Request",
                           recipients=[email])
             msg.body = f"To reset your password, visit the following link: {reset_url}"
-            mail.send(msg)
-
-            flash("A password reset link has been sent to your email.", "success")
-            return redirect(url_for("account_settings"))
+            try:
+                mail.send(msg)
+                flash("A password reset link has been sent to your email.", "success")
+            except Exception as e:
+                print(f"Error sending email: {e}")
+                flash("Failed to send the password reset link. Please try again later.", "error")
         else:
             flash("No email address found for your account.", "error")
 
