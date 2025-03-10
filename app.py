@@ -90,7 +90,7 @@ def chat():
             return jsonify({"response": "Error: No message provided."}), 400
 
         payload = {
-            "model": "deepseek/deepseek-chat:free",
+            "model": "deepseek/deepseek-r1-zero:free",
             "messages": [
                 {"role": "system", "content": "You are Moneyy, an expert in finance."},
                 {"role": "user", "content": user_message}
