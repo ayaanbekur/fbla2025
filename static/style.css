@@ -23,6 +23,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000; /* Ensure navbar stays on top */
+    align-self: right;
 }
 
 .navbar a {
@@ -38,6 +39,24 @@ body {
 .navbar a:hover {
     background-color: #6B7C61; /* Muted Green for hover effect */
 }
+
+/* Smaller Menu Button, but keep icon size */
+.navbar .btn-success {
+    font-size: 0; /* Hide text size affecting icon */
+    padding: 6px 8px; /* Adjust padding */
+    width: 5px; /* Set fixed width */
+    height: 35px; /* Set fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+/* Keep the icon size normal inside the button */
+.navbar .btn-success i {
+    font-size: 1rem; /* Ensure icon remains visible */
+}
+
 
 /* Hero Section (Homepage) */
 .hero {
@@ -213,7 +232,7 @@ footer {
     right: -300px;
     width: 300px;
     height: 100%;
-    background-color: #343a40;
+    background-color: #6B7C61;
     color: white;
     transition: right 0.3s ease;
     z-index: 1000;
@@ -264,15 +283,21 @@ footer {
     display: block;
 }
 
-.btn-success {
-    background-color: #6B7C61; /* Green color */
-    border: none;
-    padding: 5px 10px; /* Smaller size */
-    font-size: 14px; /* Smaller font */
+/* 🔽 Slightly Smaller "Generate Summary" Button 🔽 */
+.btn-success[href*="summary"] {
+    font-size: 1rem;       /* Reduce font size */
+    padding: 10px 18px;     /* Adjust padding */
+    min-width: 150px;      /* Slightly smaller width */
+    background-color: #6B7C61;
+    color: white;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
 }
 
-.btn-success:hover {
-    background-color: #A7B194; /* Lighter green on hover */
+/* Hover effect */
+.btn-success[href*="summary"]:hover {
+    background-color: #A7B194;
+}
+
+#income-expenses {
+    color: #495057;
 }
