@@ -24,7 +24,8 @@ load_dotenv()
 
 OPENROUTER_API_KEY = "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"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions" # OpenRouter API endpoint
-#OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+# Alpha Vantage API key
+ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
   
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
@@ -308,8 +309,49 @@ def dashboard():
     user_data = load_user_data()
     user = user_data[username]
 
-    return render_template("dashboard.html", user=user)
+    # Calculate total income and expenses
+    total_income = 0
+    total_expenses = 0
 
+    for transaction in user.get("transactions", []):
+        if transaction["type"] == "Income":
+            total_income += transaction["amount"]
+        else:
+            total_expenses += transaction["amount"]
+
+    return render_template("dashboard.html", user=user, total_income=total_income, total_expenses=total_expenses)
+  
+@app.route("/stocks")
+def stocks():
+    # Get the search query from the URL
+    symbol = request.args.get("symbol", "").upper()
+
+    # Default list of stock symbols to display if no search query
+    stock_symbols = ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "NFLX", "META", "NVDA", "PYPL", "INTC"]
+
+    # If a search query is provided, only fetch data for that symbol
+    if symbol:
+        stock_symbols = [symbol]
+
+    # Fetch real-time stock data
+    stock_data = []
+    for symbol in stock_symbols:
+        url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={ALPHA_VANTAGE_API_KEY}"
+        response = requests.get(url)
+        data = response.json()
+
+        if "Global Quote" in data:
+            stock_info = data["Global Quote"]
+            stock_data.append({
+                "symbol": symbol,
+                "price": stock_info.get("05. price", "N/A"),
+                "change": stock_info.get("09. change", "N/A"),
+                "change_percent": stock_info.get("10. change percent", "N/A")
+            })
+        else:
+            print(f"Error fetching data for {symbol}: {data}")
+
+    return render_template("stocks.html", stock_data=stock_data)
 
 # Add income or expense
 @app.route("/add_transaction", methods=["GET", "POST"])
@@ -318,17 +360,26 @@ def add_transaction():
         flash("Please log in to add a transaction.", "error")
         return redirect(url_for("login"))
 
+    # Define the list of categories
+    categories = [
+        "Groceries", "Utilities", "Rent", "Entertainment", 
+        "Transportation", "Savings", "Healthcare", "Education", 
+        "Travel", "Other"
+    ]
+
     if request.method == "POST":
         username = session["username"]
         user_data = load_user_data()
         user = user_data[username]
 
+        # Get form data
         transaction_type = request.form.get("type").capitalize()
         category = request.form.get("category")
         amount = float(request.form.get("amount"))
         description = request.form.get("description")
         transaction_date = request.form.get("date")
 
+        # Create transaction object
         transaction = {
             "date": transaction_date,
             "type": transaction_type,
@@ -337,19 +388,25 @@ def add_transaction():
             "description": description
         }
 
+        # Add transaction to user's data
         user["transactions"].append(transaction)
+
+        # Update balance
         if transaction_type == "Income":
             user["balance"] += amount
         else:
             user["balance"] -= amount
 
+        # Save updated user data
         save_user_data(user_data)
+
         flash("Transaction added successfully!", "success")
         return redirect(url_for("dashboard"))
 
-    return render_template("add_transaction.html")
+    # Pass the categories to the template
+    return render_template("add_transaction.html", categories=categories)
 
-
+ 
 # View all transactions
 @app.route("/view_transactions")
 def view_transactions():
@@ -418,10 +475,19 @@ def summary():
     user_data = load_user_data()
     transactions = user_data[username]["transactions"]
 
+    # Define categories
+    categories = [
+        "Groceries", "Utilities", "Rent", "Entertainment", 
+        "Transportation", "Savings", "Healthcare", "Education", 
+        "Travel", "Other"
+    ]
+
     if request.method == "POST":
         period = request.form.get("period").capitalize()
+        category = request.form.get("category")  # Get the selected category
         now = datetime.now()
 
+        # Filter by period
         if period == "Weekly":
             start_date = now - timedelta(days=7)
         elif period == "Monthly":
@@ -435,14 +501,16 @@ def summary():
             flash("Invalid period.", "error")
             return redirect(url_for("summary"))
 
+        # Filter transactions by date and category
         filtered_transactions = [
             t for t in transactions
             if datetime.strptime(t["date"], "%Y-%m-%d %H:%M:%S") >= start_date
+            and (category == "All" or t["category"] == category)  # Filter by category
         ]
 
-        return render_template("summary.html", transactions=filtered_transactions, period=period, user=user_data[username])
+        return render_template("summary.html", transactions=filtered_transactions, period=period, categories=categories, selected_category=category, user=user_data[username])
 
-    return render_template("summary.html")
+    return render_template("summary.html", categories=categories, user=user_data[username])
 
 
 # Edit or delete a transaction

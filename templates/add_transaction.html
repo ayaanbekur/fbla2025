@@ -7,15 +7,32 @@
     <div class="card-body">
         <form method="POST" action="{{ url_for('add_transaction') }}"> <!-- Add transaction form -->
             <div class="mb-3">
-                <label for="type" class="form-label">Type</label> <!-- Transaction type -->
-                <select class="form-select" id="type" name="type" required>     <!-- Transaction type input -->
-                    <option value="Income">Income</option> <!-- Income option -->
-                    <option value="Expense">Expense</option> <!-- Expense option -->
-                </select>
+                <label for="type" class="form-label">Type</label>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle w-100 text-start" type="button" id="typeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select Type
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="typeDropdown">
+                        <li><a class="dropdown-item" href="#" onclick="selectType('Income')">Income</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="selectType('Expense')">Expense</a></li>
+                    </ul>
+                </div>
+                <input type="hidden" id="type" name="type" required>
             </div>
+            
+            <script>
+                function selectType(type) {
+                    document.getElementById("type").value = type;
+                    document.getElementById("typeDropdown").innerText = type;
+                }
+            </script>
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label> <!-- Transaction category -->
-                <input type="text" class="form-control" id="category" name="category" required> <!-- Transaction category input -->
+                <select class="form-select" id="category" name="category" required> <!-- Dropdown for category -->
+                    {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="mb-3">
                 <label for="amount" class="form-label">Amount</label> <!-- Transaction amount -->

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-chart-line"></i> Stocks</h2>
+
+<!-- Search Bar with Dropdown -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('stocks') }}">
+            <div class="input-group">
+                <select class="form-select rounded-pill" name="symbol">
+                    <option value="">Select a stock</option>
+                    <option value="AAPL">Apple (AAPL)</option>
+                    <option value="GOOGL">Google (GOOGL)</option>
+                    <option value="MSFT">Microsoft (MSFT)</option>
+                    <option value="AMZN">Amazon (AMZN)</option>
+                    <option value="TSLA">Tesla (TSLA)</option>
+                    <option value="NFLX">Netflix (NFLX)</option>
+                    <option value="META">Meta (META)</option>
+                    <option value="NVDA">NVIDIA (NVDA)</option>
+                    <option value="PYPL">PayPal (PYPL)</option>
+                    <option value="INTC">Intel (INTC)</option>
+                </select>
+                <button type="submit" class="btn btn-primary rounded-pill ms-2">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Stock Data Table -->
+<div class="card">
+    <div class="card-body">
+        {% if stock_data %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Price</th>
+                        <th>Change</th>
+                        <th>Change %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stock_data %}
+                        <tr>
+                            <td>{{ stock.symbol }}</td>
+                            <td>${{ stock.price }}</td>
+                            <td class="{{ 'text-success' if stock.change|float > 0 else 'text-danger' }}">
+                                {{ stock.change }}
+                            </td>
+                            <td class="{{ 'text-success' if stock.change|float > 0 else 'text-danger' }}">
+                                {{ stock.change_percent }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-warning">
+                No stock data found for the selected symbol.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
