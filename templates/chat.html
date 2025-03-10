@@ -32,6 +32,7 @@
             addMessage("You", userMessage);
             userMessageInput.value = ""; // Clear input field
 
+<<<<<<< HEAD
             try {
                 const response = await fetch("/chat", {
                     method: "POST",
@@ -40,6 +41,16 @@
                 });
 
                 if (!response.ok) throw new Error("Failed to get response");
+=======
+            // Send the message to the server
+            const response = await fetch("https://personal-finance-manager-sg7m.onrender.com/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ message: userMessage }),
+            });
+>>>>>>> 3e2914d735dd3de77cd31ecedcc606e4bfcc3678
 
                 const data = await response.json();
                 
@@ -68,5 +79,8 @@
         chatBox.appendChild(messageElement);
     }
 </script>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3e2914d735dd3de77cd31ecedcc606e4bfcc3678
 {% endblock %}
