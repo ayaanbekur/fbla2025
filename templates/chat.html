@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="mb-4"><i class="fas fa-comments"></i> Chat with Moneyy</h2>
+<h2 class="mb-4"><i class="fas fa-comments"></i> Chat with Gemeni</h2>
 
 <div class="card">
     <div class="card-body">
@@ -32,7 +32,6 @@
             addMessage("You", userMessage);
             userMessageInput.value = ""; // Clear input field
 
-<<<<<<< HEAD
             try {
                 const response = await fetch("/chat", {
                     method: "POST",
@@ -41,16 +40,6 @@
                 });
 
                 if (!response.ok) throw new Error("Failed to get response");
-=======
-            // Send the message to the server
-            const response = await fetch("https://personal-finance-manager-sg7m.onrender.com/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ message: userMessage }),
-            });
->>>>>>> 3e2914d735dd3de77cd31ecedcc606e4bfcc3678
 
                 const data = await response.json();
                 
@@ -59,7 +48,7 @@
 
                 // Extract and display AI response
                 const aiResponse = typeof data.response === "string" ? data.response : JSON.stringify(data.response);
-                addMessage("Moneyy", aiResponse);
+                addMessage("Gemeni", aiResponse);
 
             } catch (error) {
                 addMessage("Error", error.message);
@@ -79,8 +68,5 @@
         chatBox.appendChild(messageElement);
     }
 </script>
-<<<<<<< HEAD
 
-=======
->>>>>>> 3e2914d735dd3de77cd31ecedcc606e4bfcc3678
 {% endblock %}

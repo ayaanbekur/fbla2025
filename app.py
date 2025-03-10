@@ -78,23 +78,41 @@ def chat_page():
     if "username" not in session:
         flash("Please log in to access the chat.", "error")
         return redirect(url_for("login"))
-    return render_template("chat.html")
 
+    # Load user data and chat history
+    username = session["username"]
+    user_data = load_user_data()
+    user = user_data.get(username, {})
+    chat_history = user.get("chat_history", [])
 
+    return render_template("chat.html", chat_history=chat_history)
+
+  
 @app.route("/chat", methods=["POST"])
 def chat():
+    if "username" not in session:
+        return jsonify({"response": "Error: User not logged in."}), 401
+
     try:
         user_message = request.json.get("message", "")
 
         if not user_message:
             return jsonify({"response": "Error: No message provided."}), 400
 
+        # Load user data
+        username = session["username"]
+        user_data = load_user_data()
+        user = user_data.get(username, {})
+
+        # Add user message to chat history
+        if "chat_history" not in user:
+            user["chat_history"] = []
+        user["chat_history"].append({"role": "user", "content": user_message})
+
+        # Prepare payload for the AI
         payload = {
-            "model": "deepseek/deepseek-r1-zero:free",
-            "messages": [
-                {"role": "system", "content": "You are Moneyy, an expert in finance."},
-                {"role": "user", "content": user_message}
-            ]
+            "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
+            "messages": user["chat_history"]  # Include the entire chat history
         }
 
         headers = {
@@ -102,22 +120,29 @@ def chat():
             "Content-Type": "application/json"
         }
 
+        # Send request to the AI
         response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
 
         if response.status_code != 200:
             print(f"API Error {response.status_code}: {response.text}")
             return jsonify({"response": f"Error: {response.status_code} - {response.text}"}), 500
 
-        # Extract response properly
+        # Extract AI response
         result = response.json()
         print("API Raw Response:", result)  # Log raw response for debugging
 
-        # Ensure we get text content
         if "choices" in result and result["choices"]:
             message_obj = result["choices"][0].get("message", {})
             ai_response = message_obj.get("content", "").strip()
         else:
             ai_response = "Unexpected response format from the AI."
+
+        # Add AI response to chat history
+        user["chat_history"].append({"role": "assistant", "content": ai_response})
+
+        # Save updated user data
+        user_data[username] = user
+        save_user_data(user_data)
 
         print("Extracted AI Response:", ai_response)  # Debugging output
 

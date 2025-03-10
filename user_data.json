@@ -5,6 +5,48 @@
         "balance": 0,
         "transactions": [],
         "goals": [],
-        "created_at": "2025-02-24 17:51:34"
+        "created_at": "2025-02-24 17:51:34",
+        "chat_history": [
+            {
+                "role": "user",
+                "content": "hey"
+            },
+            {
+                "role": "assistant",
+                "content": ""
+            },
+            {
+                "role": "user",
+                "content": "hey"
+            },
+            {
+                "role": "assistant",
+                "content": ""
+            },
+            {
+                "role": "user",
+                "content": "hey"
+            },
+            {
+                "role": "assistant",
+                "content": ""
+            },
+            {
+                "role": "user",
+                "content": "hey"
+            },
+            {
+                "role": "assistant",
+                "content": ""
+            },
+            {
+                "role": "user",
+                "content": "hello"
+            },
+            {
+                "role": "assistant",
+                "content": "Hello! How can I help you today?"
+            }
+        ]
     }
 }
