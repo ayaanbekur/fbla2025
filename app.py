@@ -22,7 +22,7 @@ from llamaapi import LlamaAPI
 # Load environment variables
 load_dotenv()
 
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions" # OpenRouter API endpoint
 # Alpha Vantage API key
 ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
@@ -112,9 +112,12 @@ def chat():
 
         # Prepare payload for the AI
         payload = {
-            "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
-            "messages": user["chat_history"]  # Include the entire chat history
-        }
+    "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
+    "messages": user["chat_history"],
+    "temperature": 0.7,  # Adjust as needed
+    "format": "markdown"  # <-- Tell the AI to use markdown-style formatting
+}
+ 
 
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
@@ -364,7 +367,7 @@ def add_transaction():
     categories = [
         "Groceries", "Utilities", "Rent", "Entertainment", 
         "Transportation", "Savings", "Healthcare", "Education", 
-        "Travel", "Other"
+        "Travel", "Other", "Income", "Salary", "Bonus", "Gift"
     ]
 
     if request.method == "POST":

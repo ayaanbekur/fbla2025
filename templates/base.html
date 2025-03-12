@@ -76,15 +76,17 @@
     <!-- Main Content -->
     <div class="container mt-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show flash-message" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
 
         {% block content %}{% endblock %}
     </div>
@@ -101,6 +103,18 @@
             sideMenu.classList.toggle("active");
             overlay.classList.toggle("active");
         }
+        document.addEventListener("DOMContentLoaded", function() {
+        const flashMessages = document.querySelectorAll(".flash-message");
+        flashMessages.forEach((message) => {
+            setTimeout(() => {
+                message.classList.add("fade-out"); // Start fading out
+            }, 5000); // Wait 5 seconds before fading
+            
+            setTimeout(() => {
+                message.remove(); // Remove after animation ends
+            }, 6000); // 1 second after fade starts
+        });
+    });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -2,10 +2,25 @@
     "Dev test": {
         "password": "464a073ccd5fb87934de5c1aad258eb110db0b508469406e2203ed4f24e91523",
         "email": "ayaanbekur@gmail.com",
-        "balance": 0,
-        "transactions": [],
+        "balance": 900.0,
+        "transactions": [
+            {
+                "date": "2025-03-12",
+                "type": "Income",
+                "category": "Salary",
+                "amount": 1000.0,
+                "description": "Monthly Salary"
+            },
+            {
+                "date": "2025-03-12",
+                "type": "Expense",
+                "category": "Groceries",
+                "amount": 100.0,
+                "description": "groceries"
+            }
+        ],
         "goals": [],
-        "created_at": "2025-02-24 17:51:34",
+        "created_at": "2025-03-12 17:14:00",
         "chat_history": [
             {
                 "role": "user",
@@ -13,31 +28,23 @@
             },
             {
                 "role": "assistant",
-                "content": ""
+                "content": "Hey there! How can I help you today?"
             },
             {
                 "role": "user",
-                "content": "hey"
+                "content": "how much is bitcoin"
             },
             {
                 "role": "assistant",
-                "content": ""
+                "content": "The price of Bitcoin fluctuates constantly. To get the most up-to-date price, I recommend checking a reputable cryptocurrency tracking website. Some popular options include:\n\n*   **CoinMarketCap:** [https://coinmarketcap.com/](https://coinmarketcap.com/)\n*   **CoinGecko:** [https://www.coingecko.com/](https://www.coingecko.com/)\n*   **TradingView:** [https://www.tradingview.com/](https://www.tradingview.com/)\n\nYou can typically find the current price of Bitcoin, along with its trading volume, market capitalization, and other relevant data on these sites."
             },
             {
                 "role": "user",
-                "content": "hey"
+                "content": "how do i update the ai im using thorugh openrouter, and how do i make it more current?"
             },
             {
                 "role": "assistant",
-                "content": ""
-            },
-            {
-                "role": "user",
-                "content": "hey"
-            },
-            {
-                "role": "assistant",
-                "content": ""
+                "content": "You're using something I don't manage directly, but the general principle is that you *don't* \"update\" the AI models *directly* running through OpenRouter. Think of OpenRouter as a service that connects you to various AI models, not a provider of the models themselves. To get a more \"current\" AI experience through OpenRouter, you need to consider a few things:\n\n**1. Choose a Newer or \"Cutting-Edge\" Model on OpenRouter:**\n\n*   **Check the \"Model Options\" Page:** Explore OpenRouter's website or dashboard to see what models are currently offered. They often have release dates or version numbers next to the models. Look for more recent models.\n*   **Consider Model Specializations:** Some newer models might be specifically fine-tuned for certain tasks (like coding, writing, or general conversation). When selecting a model, you'll want to choose one that is well suited for your intended task to improve the speed of processing.\n*   **Look for Beta/Preview Models:** Some providers may offer access to their latest, pre-release models via a \"beta\" or \"preview\" program. You can check this on OpenRouter, too!\n\n**2. Understand What Makes a Model \"Current\":**\n\n*   **Training Data:** AI models are trained on massive datasets. A more \"current\" model is usually trained on a more recent (and, ideally, higher-quality) dataset. This means it will have \"seen\" and learned from more recent information, news, and events.\n*   **Model Architecture/Updates:** AI research is constantly evolving. New model architectures often result in improved performance, reasoning, and efficiency. The model's architecture has been tweaked, changed, updated etc., using techniques the creators have learned and incorporated.\n*   **Fine-Tuning:** After a base model is trained, it can be fine-tuned for specific tasks or domains. Fine-tuning involves adjusting the model's weights on a new dataset, which also helps update it.\n\n**3. How To Use the Updated Models:**\n\n*   **Refer to OpenRouter's Documentation:**\n    *   **API Keys:** You need to set it up and be logged on to OpenRouter.\n    *   **Model Selection/Calling:** Within your code or the UI, *specify the new model* you want to use when making a call to OpenRouter's API. The setup typically involves changing a string.\n*   **Testing and Evaluation:** Once you've updated your model selection, test the updated one, to see if you like it.\n\n**4. Considerations and Limitations:**\n\n*   **Cost:** Newer or more powerful models sometimes cost more to use on OpenRouter. Understand the pricing structure and your budget.\n*   **Performance:** The newer, \"better\" model might or might not always be what you want. A more powerful model can sometimes be slower, and the answers, based on newer datasets may result in different answer quality.\n*   **Model Availability:** OpenRouter's current model lineup might change over time, and models might also be deprecated or phased out by their providers.\n*   **Context Window:** A model's \"context window\" is the amount of text it can process at once. Newer models tend to have larger context windows, enabling you to provide more input and maintain a more extended conversation.\n*   **The Models Update, Not You:** You may see some lag time, before a new dataset hits a model, so while the model is new, it's often trained on data sets from weeks, months, or longer ago. The model likely has more context, and newer information.\n*   **Understanding OpenRouter Itself:** You're using an API service. You don't manage the AI models *running within* OpenRouter.\n\n**In Simple Terms:**\nYou don't \"update\" a model inside OpenRouter. You choose a *different* model offered by OpenRouter, one trained more recently or built with a newer architecture. Think of it like choosing a different brand of TV -- you can look at the ones that offer the new features and benefits!\n\nI hope this helps clarify things! Let me know if you have more questions."
             },
             {
                 "role": "user",
@@ -45,7 +52,15 @@
             },
             {
                 "role": "assistant",
-                "content": "Hello! How can I help you today?"
+                "content": "Hi there! How can I help you today?"
+            },
+            {
+                "role": "user",
+                "content": "how much is bitcoin"
+            },
+            {
+                "role": "assistant",
+                "content": "As I mentioned before, the price of Bitcoin fluctuates constantly. To get the most up-to-date price, I recommend checking a reputable cryptocurrency tracking website. Here are those links again:\n\n*   **CoinMarketCap:** [https://coinmarketcap.com/](https://coinmarketcap.com/)\n*   **CoinGecko:** [https://www.coingecko.com/](https://www.coingecko.com/)\n*   **TradingView:** [https://www.tradingview.com/](https://www.tradingview.com/)\n\nYou'll find the current price on those sites."
             }
         ]
     }

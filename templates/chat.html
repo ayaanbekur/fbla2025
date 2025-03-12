@@ -19,6 +19,8 @@
     </div>
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     const chatBox = document.getElementById("chat-box");
     const chatForm = document.getElementById("chat-form");
@@ -64,9 +66,13 @@
     // Function to add messages to the chat box
     function addMessage(sender, message) {
         const messageElement = document.createElement("div");
-        messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        
+        // Use Marked.js to format markdown (including `code`)
+        messageElement.innerHTML = `<strong>${sender}:</strong> ${marked.parse(message)}`;
+
         chatBox.appendChild(messageElement);
     }
+
 </script>
 
 {% endblock %}

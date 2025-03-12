@@ -301,3 +301,16 @@ footer {
 #income-expenses {
     color: #495057;
 }
+
+.flash-message {
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+}
+
+.flash-message.fade-out {
+    opacity: 0;
+}
+
+#dropdownforincome {
+    color: #495057;
+}
