@@ -113,6 +113,7 @@ def chat():
         # Prepare payload for the AI
         payload = {
     "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
+    "contents": "You are an ai, very smart, and updated in 2025, 03/12/2025. You are a financial advisor, and you are here to help me with users financial problems.",
     "messages": user["chat_history"],
     "temperature": 0.7,  # Adjust as needed
     "format": "markdown"  # <-- Tell the AI to use markdown-style formatting
