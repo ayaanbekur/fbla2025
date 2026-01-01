@@ -22,12 +22,22 @@ from llamaapi import LlamaAPI
 # Load environment variables
 load_dotenv()
 
+app = Flask(__name__)
+
+secret = app.config.get("SECRET_KEY") or os.environ.get("SECRET_KEY")
+if not secret:
+    raise RuntimeError(
+        "SECRET_KEY is not set. Set app.config['SECRET_KEY'] or the SECRET_KEY env var.\n"
+        "PowerShell: $env:SECRET_KEY = 'your-secret'\n"
+        "Or create a .env file with SECRET_KEY=your-secret"
+    )
+
+serializer = URLSafeTimedSerializer(secret)
+
 OPENROUTER_API_KEY = "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"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions" # OpenRouter API endpoint
 # Alpha Vantage API key
 ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
-  
-app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
