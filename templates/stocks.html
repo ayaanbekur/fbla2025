@@ -1,15 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="mb-4"><i class="fas fa-chart-line"></i> Stocks</h2>
+<h2 class="mb-4"><i class="fas fa-chart-line"></i> Stocks
+    {% if stock_status %}
+        {% if stock_status_level == 'error' %}
+            <span class="badge bg-danger ms-2 stock-status-badge">{{ stock_status }}</span>
+        {% elif stock_status_level == 'warning' %}
+            <span class="badge bg-warning text-dark ms-2 stock-status-badge">{{ stock_status }}</span>
+        {% else %}
+            <span class="badge bg-success ms-2 stock-status-badge">{{ stock_status }}</span>
+        {% endif %}
+
+        {% if stock_status == 'API key not configured' %}
+            <small class="stock-status-help">To enable stocks, add <code>ALPHA_VANTAGE_API_KEY</code> to your <code>.env</code> file or environment variables. See <a href="{{ url_for('account_settings') }}">Account Settings</a> for details.</small>
+        {% endif %}
+    {% endif %}
+</h2>
 
 <!-- Search Bar with Dropdown -->
 <div class="card mb-4">
     <div class="card-body">
         <form method="GET" action="{{ url_for('stocks') }}">
             <div class="input-group">
-                <select class="form-select rounded-pill" name="symbol">
-                    <option value="">Select a stock</option>
+                <input type="text" name="symbol" id="symbolInput" class="form-control rounded-pill" placeholder="Enter ticker (e.g., AAPL) or choose below">
+                <select class="form-select rounded-pill" id="symbolSelect" name="symbol_select" style="max-width: 240px; margin-left: 8px;">
+                    <option value="">Quick picks</option>
                     <option value="AAPL">Apple (AAPL)</option>
                     <option value="GOOGL">Google (GOOGL)</option>
                     <option value="MSFT">Microsoft (MSFT)</option>
@@ -20,13 +35,19 @@
                     <option value="NVDA">NVIDIA (NVDA)</option>
                     <option value="PYPL">PayPal (PYPL)</option>
                     <option value="INTC">Intel (INTC)</option>
-                    <option value="INTC">Bitcoin (BTCN)</option>
                 </select>
                 <button type="submit" class="btn btn-primary rounded-pill ms-2">
                     <i class="fas fa-search"></i> Search
                 </button>
             </div>
         </form>
+        <script>
+            // When the quick-pick select changes, copy value to the text input
+            document.getElementById('symbolSelect').addEventListener('change', function() {
+                var v = this.value || '';
+                document.getElementById('symbolInput').value = v;
+            });
+        </script>
     </div>
 </div>
 

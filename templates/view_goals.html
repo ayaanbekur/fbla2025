@@ -14,13 +14,21 @@
                     <strong>Saved:</strong> ${{ goal.saved | round(2) }} <!-- Goal saved -->
                 </p>
                 <div class="progress mb-3">
-                    <div class="progress-bar" role="progressbar" style="width: '{{ (goal.saved / goal.target * 100) | round(2) }}%'"> <!-- Goal progress bar -->
-                        {{ (goal.saved / goal.target * 100) | round(2) }}%
+                    {% set pct = (goal.saved / goal.target * 100) if goal.target else 0 %}
+                    {% set pct_display = pct | round(2) %}
+                    {% set pct_width = pct if pct <= 100 else 100 %}
+                    <div class="progress-bar" role="progressbar" style="width: {{ pct_width }}%;" aria-valuenow="{{ pct_display }}" aria-valuemin="0" aria-valuemax="100"> <!-- Goal progress bar -->
+                        {{ pct_display }}%
                     </div>
                 </div>
                 <a href="{{ url_for('contribute_to_goal', index=loop.index0) }}" class="btn btn-primary btn-sm"> <!-- Contribute button -->
                     <i class="fas fa-plus"></i> Contribute
                 </a>
+                <form method="POST" action="{{ url_for('delete_goal', index=loop.index0) }}" onsubmit="return confirm('Delete this goal? This cannot be undone.');" style="display:inline; margin-left:6px;">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
             </div>
         </div>
     </div>

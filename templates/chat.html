@@ -50,7 +50,7 @@
 
                 // Extract and display AI response
                 const aiResponse = typeof data.response === "string" ? data.response : JSON.stringify(data.response);
-                addMessage("Gemeni", aiResponse);
+                addMessage("Gemma", aiResponse);
 
             } catch (error) {
                 addMessage("Error", error.message);

@@ -2,12 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import json
 import os
 from datetime import datetime, timedelta
+import time
 import hashlib
 from dotenv import load_dotenv
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 import re
-import openai
 import requests
 from flask_dance.contrib.google import make_google_blueprint
 from flask_dance.consumer import oauth_authorized, oauth_error
@@ -15,9 +15,6 @@ from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from openai import OpenAI
-import json
-from llamaapi import LlamaAPI
  
 # Load environment variables
 load_dotenv()
@@ -34,10 +31,16 @@ if not secret:
 
 serializer = URLSafeTimedSerializer(secret)
 
-OPENROUTER_API_KEY = "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"
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions" # OpenRouter API endpoint
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"  # OpenRouter API endpoint
+# Google AI Studio config
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_AI_MODEL = os.getenv("GOOGLE_AI_MODEL", "google/gemma-3-27b-it:free")
 # Alpha Vantage API key
 ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
+# Simple in-memory cache for stock data to reduce API calls (symbol -> {'data':..., 'ts': timestamp})
+STOCK_CACHE = {}
+STOCK_CACHE_TTL = 60 * 5  # 5 minutes
 app.secret_key = os.getenv("SECRET_KEY")
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -120,15 +123,64 @@ def chat():
             user["chat_history"] = []
         user["chat_history"].append({"role": "user", "content": user_message})
 
-        # Prepare payload for the AI
+        # Ensure API key is set
+        if not OPENROUTER_API_KEY:
+            return jsonify({"response": "Error: OpenRouter API key not configured on server."}), 500
+
+        # Build a clear system prompt and assemble messages (system + history)
+        system_prompt = (
+            "You are an AI financial advisor (knowledge updated to 2025-03-12). "
+            "Provide concise, safe, and user-friendly financial advice. Use markdown formatting for answers."
+        )
+
+        messages = [{"role": "system", "content": system_prompt}] + user.get("chat_history", [])
+
+        # If Google key is configured and preferred, try Google AI Studio first
+        if GOOGLE_API_KEY:
+            try:
+                # Build a plain-text prompt combining system + conversation history to send to Google
+                convo_text = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
+                google_endpoint = f"https://generativelanguage.googleapis.com/v1beta2/models/{GOOGLE_AI_MODEL}:generateText?key={GOOGLE_API_KEY}"
+                google_payload = {
+                    "prompt": convo_text,
+                    "temperature": 0.7,
+                    "maxOutputTokens": 512
+                }
+                g_resp = requests.post(google_endpoint, json=google_payload, timeout=20)
+                if g_resp.status_code == 200:
+                    g_json = g_resp.json()
+                    # Try common fields used by Google responses
+                    g_text = None
+                    if isinstance(g_json, dict):
+                        # v1beta2 generateText often returns 'candidates'
+                        if "candidates" in g_json and g_json["candidates"]:
+                            g_text = g_json["candidates"][0].get("output") or g_json["candidates"][0].get("content")
+                        g_text = g_text or g_json.get("output") or g_json.get("response")
+                    if g_text:
+                        ai_response = str(g_text).strip()
+                        # Save and return
+                        user["chat_history"].append({"role": "assistant", "content": ai_response})
+                        user_data[username] = user
+                        save_user_data(user_data)
+                        print("Google AI Response:", ai_response)
+                        return jsonify({"response": ai_response})
+                    else:
+                        print("Google AI returned unexpected format:", g_json)
+                        # Fall through to OpenRouter
+                else:
+                    print(f"Google API error {g_resp.status_code}: {g_resp.text}")
+                    # Fall through to OpenRouter
+            except Exception as e:
+                print("Google AI request exception:", e)
+                # Fall through to OpenRouter
+
+        # Prepare payload for the AI using environment model or sensible default
         payload = {
-    "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
-    "contents": "You are an ai, very smart, and updated in 2025, 03/12/2025. You are a financial advisor, and you are here to help me with users financial problems.",
-    "messages": user["chat_history"],
-    "temperature": 0.7,  # Adjust as needed
-    "format": "markdown"  # <-- Tell the AI to use markdown-style formatting
-}
- 
+            "model": os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-exp:free"),
+            "messages": messages,
+            "temperature": 0.7,
+            "format": "markdown"
+        }
 
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
@@ -136,20 +188,76 @@ def chat():
         }
 
         # Send request to the AI
-        response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
+        try:
+            response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers, timeout=20)
+        except requests.RequestException as e:
+            print(f"Request error to OpenRouter: {e}")
+            return jsonify({"response": "Error: Failed to contact AI service."}), 500
 
         if response.status_code != 200:
-            print(f"API Error {response.status_code}: {response.text}")
-            return jsonify({"response": f"Error: {response.status_code} - {response.text}"}), 500
+            # Parse the error body if possible
+            err_text = response.text
+            try:
+                err_json = response.json()
+                # grab a helpful message when available
+                err_msg = err_json.get("error", {}).get("message") or err_json.get("message")
+                if err_msg:
+                    err_text = str(err_msg)
+            except Exception:
+                err_json = None
 
-        # Extract AI response
+            print(f"API Error {response.status_code}: {response.text}")
+
+            # Special handling for auth errors
+            if response.status_code == 401:
+                # Provide a clear, actionable message to the user including the configured model
+                model_name = os.getenv("OPENROUTER_MODEL", "google/gemma-3-27b-it:free")
+                return jsonify({"response": f"AI service authentication failed (401). Please check your OPENROUTER_API_KEY on the server and ensure the key has access to the {model_name} model."}), 502
+
+            # Handle rate limiting specially
+            if response.status_code == 429:
+                provider_msg = None
+                if err_json:
+                    provider_msg = err_json.get("error", {}).get("message") or err_json.get("error", {}).get("metadata", {}).get("raw")
+                msg = provider_msg or f"AI service rate-limited upstream (HTTP {response.status_code}). Please retry shortly."
+                print("Rate limit message:", msg)
+                return jsonify({"response": msg}), 429
+
+            return jsonify({"response": f"Error: {response.status_code} - {err_text}"}), 500
+
+        # Extract AI response robustly
         result = response.json()
         print("API Raw Response:", result)  # Log raw response for debugging
 
-        if "choices" in result and result["choices"]:
-            message_obj = result["choices"][0].get("message", {})
-            ai_response = message_obj.get("content", "").strip()
-        else:
+        ai_response = None
+        # AI response parsing (OpenRouter / OpenAI-compatible formats)
+        if isinstance(result, dict):
+            choices = result.get("choices") or []
+            if choices and len(choices) > 0:
+                first = choices[0]
+                # Try common locations for the content
+                if isinstance(first, dict):
+                    msg = first.get("message") or {}
+                    if isinstance(msg, dict):
+                        ai_response = msg.get("content") or msg.get("content", "")
+                    ai_response = ai_response or first.get("text") or first.get("content")
+                else:
+                    ai_response = first
+
+            # Fallbacks
+            ai_response = ai_response or result.get("output_text") or result.get("output")
+
+        if not ai_response:
+            # As a last resort stringify the result (trim to avoid huge responses)
+            try:
+                ai_response = json.dumps(result)
+            except Exception:
+                ai_response = str(result)
+
+        ai_response = ai_response.strip()
+
+        # Add AI response to chat history
+        if not ai_response:
             ai_response = "Unexpected response format from the AI."
 
         # Add AI response to chat history
@@ -337,35 +445,71 @@ def dashboard():
   
 @app.route("/stocks")
 def stocks():
-    # Get the search query from the URL
-    symbol = request.args.get("symbol", "").upper()
+    # Accept typed symbol or quick pick
+    symbol = (request.args.get("symbol", "") or request.args.get("symbol_select", "")).strip().upper()
+
+    # Read API key dynamically so changes in .env are picked up without restarting
+    api_key = os.getenv("ALPHA_VANTAGE_API_KEY") or ALPHA_VANTAGE_API_KEY
+    if not api_key:
+        stock_status = "API key not configured"
+        stock_status_level = "error"
+        return render_template("stocks.html", stock_data=[], stock_status=stock_status, stock_status_level=stock_status_level)
 
     # Default list of stock symbols to display if no search query
-    stock_symbols = ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "NFLX", "META", "NVDA", "PYPL", "INTC"]
+    stock_symbols = [
+        "AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "NFLX", "META", "NVDA", "PYPL", "INTC",
+        "SPY", "VTI", "BABA", "ORCL", "AMD", "ADBE", "CRM", "UBER", "SQ", "SHOP"
+    ]
 
     # If a search query is provided, only fetch data for that symbol
     if symbol:
         stock_symbols = [symbol]
 
-    # Fetch real-time stock data
+    # Fetch real-time stock data with caching and error handling
     stock_data = []
-    for symbol in stock_symbols:
-        url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={ALPHA_VANTAGE_API_KEY}"
-        response = requests.get(url)
-        data = response.json()
+    stock_status = "OK"
+    stock_status_level = "ok"
+    now_ts = time.time()
 
-        if "Global Quote" in data:
+    for sym in stock_symbols:
+        # Use cache if available and fresh
+        cache_entry = STOCK_CACHE.get(sym)
+        if cache_entry and now_ts - cache_entry["ts"] < STOCK_CACHE_TTL:
+            stock_data.append(cache_entry["data"])
+            continue
+
+        try:
+            url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={sym}&apikey={api_key}"
+            response = requests.get(url, timeout=8)
+            data = response.json()
+        except Exception as e:
+            print(f"Request error for {sym}: {e}")
+            stock_status = "Partial data (network error)"
+            stock_status_level = "warning"
+            continue
+
+        # Detect API messages (rate limits)
+        if isinstance(data, dict) and ("Note" in data or "Information" in data):
+            print(f"Alpha Vantage message for {sym}: {data}")
+            stock_status = "API rate limit or error"
+            stock_status_level = "warning"
+            break
+
+        if "Global Quote" in data and data["Global Quote"]:
             stock_info = data["Global Quote"]
-            stock_data.append({
-                "symbol": symbol,
+            item = {
+                "symbol": sym,
                 "price": stock_info.get("05. price", "N/A"),
                 "change": stock_info.get("09. change", "N/A"),
                 "change_percent": stock_info.get("10. change percent", "N/A")
-            })
+            }
+            stock_data.append(item)
+            # store in cache
+            STOCK_CACHE[sym] = {"data": item, "ts": now_ts}
         else:
-            print(f"Error fetching data for {symbol}: {data}")
+            print(f"Error fetching data for {sym}: {data}")
 
-    return render_template("stocks.html", stock_data=stock_data)
+    return render_template("stocks.html", stock_data=stock_data, stock_status=stock_status, stock_status_level=stock_status_level)
 
 # Add income or expense
 @app.route("/add_transaction", methods=["GET", "POST"])
@@ -387,11 +531,28 @@ def add_transaction():
         user = user_data[username]
 
         # Get form data
-        transaction_type = request.form.get("type").capitalize()
+        raw_type = request.form.get("type", "").strip()
+        transaction_type = raw_type.capitalize()
+        if transaction_type not in ("Income", "Expense"):
+            flash("Please select a valid transaction type (Income or Expense).", "error")
+            return redirect(url_for("add_transaction"))
         category = request.form.get("category")
         amount = float(request.form.get("amount"))
         description = request.form.get("description")
-        transaction_date = request.form.get("date")
+        date_input = request.form.get("date", "").strip()
+
+        # Normalize date to include time. Accepts 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'.
+        transaction_dt = None
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+            try:
+                transaction_dt = datetime.strptime(date_input, fmt)
+                break
+            except Exception:
+                continue 
+        if not transaction_dt:
+            # Fall back to now if parsing fails or no date provided
+            transaction_dt = datetime.now()
+        transaction_date = transaction_dt.strftime("%Y-%m-%d %H:%M:%S")
 
         # Create transaction object
         transaction = {
@@ -478,6 +639,34 @@ def view_goals():
 
     return render_template("view_goals.html", goals=goals)
 
+@app.route("/delete_goal/<int:index>", methods=["POST"])
+def delete_goal(index):
+    if "username" not in session:
+        flash("Please log in to delete a savings goal.", "error")
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    user_data = load_user_data()
+    goals = user_data[username].get("goals", [])
+
+    if index < 0 or index >= len(goals):
+        flash("Invalid goal index.", "error")
+        return redirect(url_for("view_goals"))
+
+    goal = goals[index]
+    restored = float(goal.get("saved", 0) or 0)
+    if restored:
+        user_data[username]["balance"] += restored
+
+    del goals[index]
+    save_user_data(user_data)
+
+    if restored:
+        flash(f"Savings goal deleted. ${restored} restored to your balance.", "success")
+    else:
+        flash("Savings goal deleted successfully!", "success")
+    return redirect(url_for("view_goals"))
+
 # Generate a summary
 @app.route("/summary", methods=["GET", "POST"])
 def summary():
@@ -515,12 +704,23 @@ def summary():
             flash("Invalid period.", "error")
             return redirect(url_for("summary"))
 
-        # Filter transactions by date and category
-        filtered_transactions = [
-            t for t in transactions
-            if datetime.strptime(t["date"], "%Y-%m-%d %H:%M:%S") >= start_date
-            and (category == "All" or t["category"] == category)  # Filter by category
-        ]
+        # Helper to parse transaction dates in multiple formats
+        def parse_tx_date(date_str):
+            for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+                try:
+                    return datetime.strptime(date_str, fmt)
+                except Exception:
+                    continue
+            return None
+
+        # Filter transactions by date and category, gracefully skipping unparsable dates
+        filtered_transactions = []
+        for t in transactions:
+            tx_date = parse_tx_date(t.get("date", ""))
+            if not tx_date:
+                continue
+            if tx_date >= start_date and (category == "All" or t.get("category") == category):
+                filtered_transactions.append(t)
 
         return render_template("summary.html", transactions=filtered_transactions, period=period, categories=categories, selected_category=category, user=user_data[username])
 
@@ -725,6 +925,17 @@ def reset_password_token(token):
             else:
                 flash("User not found.", "error")
     return render_template("reset_password_token.html", token=token)
+
+@app.route('/ai_health')
+def ai_health():
+    """Return info about AI configuration (OpenRouter model & keys)."""
+    return jsonify({
+        "openrouter_key_present": bool(OPENROUTER_API_KEY),
+        "openrouter_model": os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-exp:free"),
+        "google_key_present": bool(GOOGLE_API_KEY),
+        "google_model": GOOGLE_AI_MODEL
+    })
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

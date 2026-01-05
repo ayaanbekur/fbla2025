@@ -320,3 +320,33 @@ footer {
 #button-for-side-menu{
     width: 50%
 }
+
+/* Dashboard Income & Expenses toggle styling */
+.income-expenses-toggle {
+    text-decoration: none;
+    color: #495057;
+    cursor: pointer;
+}
+.income-expenses-toggle:hover {
+    text-decoration: none;
+    color: #354a35;
+}
+.income-expenses-toggle .ie-caret {
+    margin-left: 6px;
+    font-size: 0.95em;
+    color: #495057;
+}
+
+/* Stock status badge */
+.stock-status-badge {
+    font-size: 0.75rem;
+    padding: 0.18rem 0.36rem;
+    vertical-align: baseline;
+}
+
+.stock-status-help {
+    display: block;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 6px;
+}
